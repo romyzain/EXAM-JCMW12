@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SOAL 2</title>
+    <style>
+        table, tr, th, td {
+            border: 1px solid bisque;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h2>Madding</h2>
+        
+            Username : <input type="text" id="userName">  
+        </br>  
+        </br>  
+            Password : <input type="password" id="userPass">
+        </br>
+        </br>
+            <input type="button" value="Login" onclick="login()">
+        </br>
+        </br>
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Kegiatan</th>
+                    <th>Hari</th>
+                    <th>Poster</th>
+                    <th>Act</th>
+                </tr>
+            </thead>
+            <tbody id="hasil">
+
+            </tbody>
+            </table>
+            <h2 id="hasil2">
+
+            </h2>
+    </center>
+
+    <script>
+    var semuaUsr = [
+        
+            {username: "admin",
+            password: "admin",
+            category: 'admin'},
+        
+            {username: "romy",
+            password: "1234",
+            category: 'user'}
+        
+
+    ]
+    
+    
+    var logged = {}
+    function login(){
+        var username = document.getElementById("userName").value
+        var password = document.getElementById("userPass").value
+        for(var i = 0; i < semuaUsr.length; i++){
+            if(username === semuaUsr[i].username && password === semuaUsr[i].password){
+                logged = semuaUsr[i]
+                document.getElementById("userName").value=''
+                document.getElementById("userPass").value=''
+                return MadingS()
+            }
+        }
+        return document.getElementById("hasil2").innerHTML = "Password / Username Salah"
+    }
+
+    function MadingS(){
+        var output=''
+        if(logged.category === "user"){
+            for(i = 0 ; i < mading.length; i++){
+                output += 
+                `
+                <tr>
+                    <td>${i+1}</td>      
+                    <td>${mading[i].kegiatan}</td>      
+                    <td>${mading[i].hari}</td>      
+                    <td>${mading[i].poster}</td>      
+                    <td></td>      
+                </tr>
+                `
+            }
+            document.getElementById("hasil2").innerHTML = logged.username
+            return document.getElementById("hasil").innerHTML = output + 
+            `<input type='button' value='logout' onclick="logout()" >`
+        }
+        else if(logged.category === 'admin'){
+            for(i = 0 ; i<mading.length; i++){
+                if(Edit === i){
+                    output += 
+                    `
+                    <tr>
+                        <td>${i+1}</td>      
+                        <td><input type='text' id='newAct' ></td>      
+                        <td><input type='text' id="newDay"></td>      
+                        <td><input type='text' id="newImg"></td>            
+                        <td>
+                            <input type='button' value='cancel' onclick="cancel()">      
+                            <input type='button' value='confirm' onclick="confirmEdit(${i})">
+                        </td>      
+                    </tr>
+                    `
+                }else if(Delete === i){
+                    output += 
+                    `
+                    <tr>
+                        <td>${i+1}</td>      
+                        <td>${mading[i].kegiatan}</td>      
+                        <td>${mading[i].hari}</td>      
+                        <td>${mading[i].poster}</td>      
+                        <td>
+                            <input type='button' value='No' onclick="cancel()">      
+                            <input type='button' value='Yes' onclick="confirmDelete(${i})">
+                        </td>      
+                    </tr>
+                    `
+                }else{
+                    output += 
+
+                    `
+                    <tr>
+                        <td>${i+1}</td>      
+                        <td>${mading[i].kegiatan}</td>      
+                        <td>${mading[i].hari}</td>      
+                        <td>${mading[i].poster}</td>      
+                        <td>
+                            <input type='button' value='Edit' onclick="editData(${i})">      
+                            <input type='button' value='Delete' onclick="deleteData(${i})">
+                        </td>      
+                    </tr>
+                    `
+                }
+            }
+            document.getElementById('hasil2').innerHTML = logged.username
+            return document.getElementById('hasil').innerHTML = ``+ output +`<tr>
+                <td></td>
+                    <td><input type='text' id='addKegiatan' ></td>
+                    <td><input type='text' id='addHari' ></td>
+                    <td><input type='text' id='addPoster' ></td>
+                    <td><input type='button' id='submitData' value='submit' onclick="submitData()"></td>
+                </tr>
+                <input type='button' value='logout' onclick="logout()" >`
+        }else{
+            return document.getElementById('hasil').innerHTML = null
+        }
+    }
+    var Edit = null
+    var Delete = null
+
+    function logout(){
+        logged = {};
+        document.getElementById('hasil2').innerHTML = ''
+        MadingS()
+    }
+
+    function submitData(){
+        var addKegiatan = document.getElementById('addKegiatan').value
+        var addhari = document.getElementById('addHari').value
+        var addPoster = document.getElementById('addPoster').value
+        mading.push(new Mading(addKegiatan, addhari, addPoster))
+        MadingS()
+    }
+
+    function deleteData(index){
+        Delete = index
+        MadingS()
+    }
+
+    function confirmDelete(i){
+        mading.splice(i,1)
+        Delete = null
+        MadingS()
+    }
+
+    function editData(index){
+        Edit = index
+        MadingS()
+    }
+
+    function cancel(){
+        Edit = null
+        Delete = null
+        MadingS()
+    }
+    
+
+    class Mading{
+        constructor(b,c,d){
+            this.kegiatan = b, 
+            this.hari = c,
+            this.poster = d
+        }
+    }
+
+    var mading = [
+        new Mading('Lari','Senin',''),
+        new Mading('Estafet','Selasa','',)
+    ]
+
+    function confirmEdit(index){
+        var newActivity = document.getElementById('newAct').value;
+        var newDay = document.getElementById('newDay').value;
+        var newImg = document.getElementById('newImg').value;
+        var hasil = new Mading(newActivity, newDay, newImg)
+        mading[index] = hasil
+        Edit = null
+        MadingS()
+    }
+    </script>
+</body>
+</html>
